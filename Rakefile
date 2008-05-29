@@ -9,7 +9,7 @@ GEM_VERSION = "0.3.0"
 AUTHOR = "Martin Aumont"
 EMAIL = "mynyml@gmail.com"
 HOMEPAGE = "http://github.com/mynyml/"
-SUMMARY = "Merb plugin that allows templates (views) to be defined in the same file as the controller"
+SUMMARY = "Merb plugin that allows templates (views, css, js) to be defined in the same file as the controller"
 
 spec = Gem::Specification.new do |s|
   s.name = NAME
