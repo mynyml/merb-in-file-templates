@@ -1,0 +1,10 @@
+TODO:
+* stylesheets/javascripts need to be cached as well
+* fix caching hierarchy (e.g. layout should not be under a controller in
+  ift.cache)
+* improve README
+* test with haml/sass
+* ensure compatibility with merb-parts and merb-slices
+* see if there is an alternative to alias_method_chain'ing #render and #display
+* ift_ namespace is kinda lame - alternative?
+* fix or find workaround for autotest infinite loops on first pass

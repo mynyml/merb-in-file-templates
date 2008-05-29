@@ -1,0 +1,151 @@
+merb-in-file-templates *ALPHA*
+==============================
+WARNING: This plugin isn't stable yet! Feel free to try it out and send patches
+though.
+
+A plugin for the Merb framework that allows templates (views) to be defined in
+the same file as the controller (Sinatra style). Especially useful for
+--very-flat apps (making them truly flat), apps that have litle/small view
+code, and for rapid prototyping.
+
+==== Features
+* Seamless integration with #render, #display
+* Respects template reloading
+* Very simple to use
+* Flexible
+
+==== Dependencies
+* Merb > 0.9.4 (?)
+* Rspec to run the specs
+
+==== Examples
+  #example for --very-flat app (single file app)
+  
+  #...
+  class Application < Merb::Controller; end
+  class Products < Application
+    def index
+      @products = Product.all
+      render
+    end
+    def show
+      @product = Product[params[:id]]
+      render
+    end
+  end
+  
+  __END__
+  @@ index.html.erb
+  <h1>Product List</h1>
+  <ul>
+    <% for product in @products -%>
+      <li><%= product.name %></li>
+    <% end -%>
+  </ul>
+  
+  @@ show.html.erb
+  <h1><%= @product.name %></h1>
+
+In-file templates cohabit peacefully with regular external templates. So in the
+above example, show.html.erb could be defined in views/products/show.html.erb
+and both templates will still be picked up normally. In case of a name conflict
+between an in-file and an external template, the external one will take
+precedence and won't be overwritten, keeping it safe from data loss.
+
+Template names follow the same rules as regular templates (usually
+action.mime_type.templating_engine). 
+
+Layouts, stylesheets and javascript can also be placed in in-file templates.
+
+  #...
+
+  __END__
+  @@ layout/application.css
+  #...
+
+  @@ layout/products.css
+  #...
+
+  @@ stylesheets/application.css
+  #...
+
+  @@ javascripts/jquery.js
+  #...
+
+==== Tweaking
+In order to be fed into merb's templating system, in-file templates need to be
+written to external files. This means you will see dynamically created view
+files inside your Merb.dir_for(:view) directory/subdirectories.
+
+The directory in which files are stored is chosen based on the templating
+system's native mechanisms, and so merb-in-file-templates will respect any
+changes to it. Therefore if you want to change where template files are stored,
+you can play with Merb.push_path(:view, ...) and the controller's
+#_template_location method.
+
+  Merb.push_path(:view, Merb.root / 'views')
+  class Application
+    def _template_location(context, type=nil, controller = controller_name)
+      "#{controller}.#{action_name}.#{type}"
+    end
+  end
+
+This will tell Merb to look under the /views directory, for a template named
+products.index.html.erb. 
+
+want even flatter?
+
+  Merb.push_path(:view, Merb.root)
+  class Application
+    def _template_location(context, type=nil, controller=controller_name)
+      "view.#{controller}.#{action_name}.#{type}"
+    end
+  end
+
+will give you a template under the root dir called view.products.index.html.erb
+(adding a common prefix, 'view.' in the example above, causes template files to
+show up nicely grouped with ls, file managers, etc, so they look organized even
+without being placed in a subdirectory).
+
+If you mix in-file and external templates and you don't want them to be mixed
+in the same directories, you can tell merb-in-file-templates to store its
+templates somewhere else. This is done through the config hash:
+
+  Merb::Plugins.config[:in_file_templates] = {
+    :view_root        => '...',
+    :stylesheets_root => '...',
+    :javascripts_root => '...',
+  }
+
+For example, you could set
+
+  :view_root => Merb.root / 'tmp' / 'ift_views'
+
+to store your files in merb-root/tmp/ift_views, or
+
+  :view_root => '/tmp'
+
+to store files in your system's tmp directory.
+
+Same goes for stylesheets and javascripts, but remember that those need to be
+placed in a public directory, and that they need to be referenced properly from
+within your html header. You can use the controller's
+#ift_dir_for(:stylesheets) and #ift_dir_for(:javascripts) methods to find their
+locations.
+
+==== Rake Task
+TODO
+(cleanup rake task before deployment..)
+
+==== Installation
+TODO
+
+==== Contact
+If you have suggestions, comments, a patch, a git pull request, rants, doc
+fixes/improvements, etc., feel free to contact me: mynyml at gmail,
+irc.freenode.net #rubyonrails, #merb
+
+Happy Hacking!
+
+-------------------------------------------------------------------------
+Copyright (c) 2008 Martin Aumont (mynyml), released under the MIT license
