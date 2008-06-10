@@ -5,7 +5,7 @@ require 'date'
 
 PLUGIN = "merb-in-file-templates"
 NAME = "merb-in-file-templates"
-GEM_VERSION = "0.3.0"
+GEM_VERSION = "0.3.1"
 AUTHOR = "Martin Aumont"
 EMAIL = "mynyml@gmail.com"
 HOMEPAGE = "http://github.com/mynyml/"
